@@ -1,0 +1,22 @@
+%h1
+  = @station.name
+  %small= @station.address
+
+.row
+  .span4
+    = image_tag @map.url
+
+  .span12
+    %table.zebra-striped
+      %thead
+        %tr
+          %th Date
+          %th Used
+          %th Unused
+
+      %tbody
+        - @station.samples.order("created_at desc").limit(10).each do |sample|
+          %tr
+            %td= l(sample.created_at, :format => :short)
+            %td= sample.used
+            %td= sample.unused

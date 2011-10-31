@@ -1,0 +1,35 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}
+    %title Bicing Stats
+    %meta{:content => "Bicing Statistics and Visualizations", :name => "description"}
+    %meta{:content => "Víctor Martínez", :name => "author"}
+    /[if lt IE 9]
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    %script{:src => "http://www.google.com/jsapi"}
+    = csrf_meta_tags
+
+    %link{:href => "images/favicon.ico", :rel => "shortcut icon"}
+    %link{:href => "images/apple-touch-icon.png", :rel => "apple-touch-icon"}
+    %link{:href => "images/apple-touch-icon-72x72.png", :rel => "apple-touch-icon", :sizes => "72x72"}
+    %link{:href => "images/apple-touch-icon-114x114.png", :rel => "apple-touch-icon", :sizes => "114x114"}
+
+  %body
+    .topbar
+      .fill
+        .container
+          = link_to "Bicing Stats", root_path, :class => "brand"
+          %ul.nav
+            %li.active= link_to "Stations", stations_path
+            %li= link_to "About", nil
+    .container
+      = yield
+
+      %footer
+        %p &copy; Company 2011
+
+
+    = yield :scripts
