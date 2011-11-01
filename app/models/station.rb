@@ -7,6 +7,7 @@ class Station < ActiveRecord::Base
   scope :by_concurrency, lambda {
     joins(:samples).
         select { ["stations.*", STDDEV(samples.used).as(:concurrency)] }.
+        where{samples.created_at >= 15.minutes.ago}.
         order { STDDEV(samples.used).desc }.group { id }
   }
 
