@@ -12,6 +12,8 @@ gem 'whenever', :require => false
 gem 'google_visualr'
 gem 'gmaps4rails'
 gem 'static-gmaps', :require => 'static_gmaps'
+gem 'googlecharts'
+gem 'valium'
 
 group :development do
   gem 'sqlite3'

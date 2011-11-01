@@ -7,6 +7,9 @@
     = image_tag @map.url
 
   .span12
+    = image_tag Gchart.bar(:data => [@station.samples.daily.value_of(:used), @station.samples.daily.value_of(:unused)],
+           :bar_colors => 'b0eb66,fd7c6e', :stacked => true , :width => 700, :height => 100)
+
     %table.zebra-striped
       %thead
         %tr
