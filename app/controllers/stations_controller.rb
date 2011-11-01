@@ -1,6 +1,6 @@
 class StationsController < ApplicationController
   def index
-    @stations = Station.order(:latitude, :longitude)
+    @stations = Station.by_concurrency.all
   end
 
   def show

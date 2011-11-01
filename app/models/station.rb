@@ -4,6 +4,12 @@ class Station < ActiveRecord::Base
   attr_accessible :id, :latitude, :longitude, :name, :address, :used, :unused
   has_many :samples, :dependent => :delete_all
 
+  scope :by_concurrency, lambda {
+    joins(:samples).
+        select { ["stations.*", STDDEV(samples.used).as(:concurrency)] }.
+        order { STDDEV(samples.used).desc }.group { id }
+  }
+
   acts_as_gmappable
 
   def gmaps

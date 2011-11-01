@@ -2,13 +2,13 @@
   Stations
   %small #{@stations.size} stations
 
-
 %table.zebra-striped
   %thead
     %tr
       %th Name
       %th Used
       %th Unused
+      %th Concurrency
 
   %tbody
     - @stations.each do |station|
@@ -19,3 +19,4 @@
           %small= station.address
         %td= station.used
         %td= station.unused
+        %td= station.concurrency
