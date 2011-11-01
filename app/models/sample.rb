@@ -2,6 +2,11 @@ class Sample < ActiveRecord::Base
   belongs_to :station
   validates_presence_of :station
 
+  scope :hourly, lambda {
+    select { [created_at, AVG(used).as(:used), AVG(unused).as(:unused)] }.
+        group { [HOUR(created_at), YEAR(created_at), MONTH(created_at), DAY(created_at)] }
+  }
+
   scope :punchcard, lambda {
     select { [
         DAYOFWEEK(created_at).as(:day),

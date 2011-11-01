@@ -7,7 +7,7 @@
     = image_tag @map.url
 
   .span12
-    = image_tag Gchart.bar(:data => [@station.samples.daily.value_of(:used), @station.samples.daily.value_of(:unused)],
+    = image_tag Gchart.bar(:data => [@station.samples.hourly.value_of(:used), @station.samples.hourly.value_of(:unused)],
            :bar_colors => 'b0eb66,fd7c6e', :stacked => true , :width => 700, :height => 100)
 
     %table.zebra-striped
@@ -18,9 +18,9 @@
           %th Unused
 
       %tbody
-        - @station.samples.order("created_at desc").limit(10).each do |sample|
+        - @station.samples.order("created_at desc").hourly.limit(4).each do |sample|
           %tr
-            %td= l(sample.created_at, :format => :short)
+            %td= l(sample.created_at.change(:min => 0, :sec => 0), :format => :short)
             %td= sample.used
             %td= sample.unused
 
