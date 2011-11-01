@@ -1,3 +1,3 @@
-every 5.minutes do
+every 1.minute do
   runner "Station.download(true)"
 end
