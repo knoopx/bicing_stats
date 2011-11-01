@@ -47,6 +47,7 @@ class Station < ActiveRecord::Base
           station_attrs = {}
           sample_attrs = {}
           station_attrs[:id], station_attrs[:longitude], station_attrs[:latitude], unknown, station_attrs[:name], unkown2, station_attrs[:address], sample_attrs[:used], sample_attrs[:unused] = line.chomp.split("|")
+          next if station_attrs[:id] == "null"
           station = self.find_or_create_by_id(station_attrs)
           station.samples.create(sample_attrs) if sample
         end
