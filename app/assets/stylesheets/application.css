@@ -7,7 +7,6 @@
  *= require_self
 */
 
-
 body {
     padding-top: 60px;
 }
@@ -15,5 +14,4 @@ body {
 small {
     color: #BFBFBF;
     font-size: 85%;
-
 }
