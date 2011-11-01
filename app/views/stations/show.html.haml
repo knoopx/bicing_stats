@@ -20,3 +20,13 @@
             %td= l(sample.created_at, :format => :short)
             %td= sample.used
             %td= sample.unused
+
+%h2 Average weekly usage distribution
+
+:javascript
+  usageDistribution(#{@station.samples.punchcard.to_json}, 960, 250);
+
+%h2 Average weekly parking availability distribution
+
+:javascript
+  unusageDistribution(#{@station.samples.punchcard.to_json}, 940, 250);
