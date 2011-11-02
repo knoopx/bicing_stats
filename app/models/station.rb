@@ -11,6 +11,8 @@ class Station < ActiveRecord::Base
         order { STDDEV(samples.used).desc }.group { id }
   }
 
+  validates_presence_of :name, :address, :latitude, :longitude
+
   scope :unavailable, lambda { where(:used => 0, :unused => 0) }
 
   acts_as_gmappable
