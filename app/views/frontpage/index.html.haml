@@ -20,10 +20,11 @@
       %a.btn{:href => "#"} More details &raquo;
 
   .span5
-    %h2 Heading
-    %p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-    %p
-      %a.btn{:href => "#"} View details &raquo;
+    %h2 Unavailable stations
+    %ul
+      - Station.unavailable.each do |station|
+        %li= link_to station.name, station
+
   .span5
     %h2 Heading
     %p Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.

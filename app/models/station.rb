@@ -11,6 +11,8 @@ class Station < ActiveRecord::Base
         order { STDDEV(samples.used).desc }.group { id }
   }
 
+  scope :unavailable, lambda { where(:used => 0, :unused => 0) }
+
   acts_as_gmappable
 
   def gmaps
@@ -44,7 +46,6 @@ class Station < ActiveRecord::Base
     data_table.set_cell(5, 0, 6.5)
     data_table.set_cell(5, 1, 7)
   end
-
 
   class << self
     def download(sample = false)
