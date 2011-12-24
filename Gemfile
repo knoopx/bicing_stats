@@ -10,6 +10,7 @@ gem 'squeel'
 gem 'twitter-bootstrap-rails'
 gem 'whenever', :require => false
 gem 'valium'
+gem 'rdiscount'
 
 group :development do
   gem 'sqlite3'
