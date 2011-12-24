@@ -17,7 +17,6 @@ class Station < ActiveRecord::Base
   scope :unavailable, lambda { where(:used => 0, :unused => 0) }
 
   default_scope order(:name)
-  acts_as_gmappable
 
   def gmaps
     true
