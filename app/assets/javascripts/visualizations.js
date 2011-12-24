@@ -2,7 +2,7 @@ var stackedAvailability = function(container, used, unused){
   var w = 700;
   var h = 100;
 
-  var max = d3.max(used);
+  var max = d3.max([d3.max(used), d3.max(unused)]);
   var x = d3.scale.linear().domain([0, used.length]).range([0, w]);
   var y = d3.scale.linear().domain([0, max]).rangeRound([0, h]);
 
