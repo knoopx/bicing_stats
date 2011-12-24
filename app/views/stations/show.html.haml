@@ -7,15 +7,16 @@
     = image_tag @map.url
 
   .span12
-    = image_tag Gchart.bar(:data => [@station.samples.hourly.value_of(:used), @station.samples.hourly.value_of(:unused)],
-           :bar_colors => 'b0eb66,fd7c6e', :stacked => true , :width => 700, :height => 100)
+    #availability
+    :javascript
+      stackedAvailability("#availability", #{@station.samples.hourly.limit(24).value_of(:used)}, #{@station.samples.hourly.limit(50).value_of(:unused)});
 
     %table.zebra-striped
       %thead
         %tr
-          %th Date
-          %th Used
-          %th Unused
+          %th Data
+          %th Bicicletes
+          %th Pàrquings
 
       %tbody
         - @station.samples.order("created_at desc").hourly.limit(4).each do |sample|
@@ -24,12 +25,16 @@
             %td= sample.used
             %td= sample.unused
 
-%h2 Average weekly usage distribution
+%h2 Disponibilitat de bicicletes mitjana per hora durant la setmana
+
+#min-used
 
 :javascript
-  usageDistribution(#{@station.samples.punchcard.to_json}, 960, 250);
+  usageDistribution("#min-used", "used", #{@station.samples.punchcard.to_json});
 
-%h2 Average weekly parking availability distribution
+%h2 Disponibilitat de pàrquing mitjana per hora durant la setmana
+
+#min-unused
 
 :javascript
-  unusageDistribution(#{@station.samples.punchcard.to_json}, 940, 250);
+  usageDistribution("#min-unused", "unused", #{@station.samples.punchcard.to_json});

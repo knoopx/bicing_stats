@@ -1,26 +1,26 @@
 .hero-unit
-  %h1 Bicing Stats
+  %h2 ¿Vols fer-te del bicing? Pensa-ho dues vegades.
   %p Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
   %p= gmaps4rails(@map)
-  %p= link_to "View stations &raquo;".html_safe, stations_path, :class => "btn primary large"
+  %p= link_to "Veure informació detallada per estació &raquo;".html_safe, stations_path, :class => "btn primary large"
 
 .row
   .span6
     %h2 Availability
     %p
-      Bicing has a total of
+      Bicing te un total de
       %span.label.success= @stations.size
-      stations,
+      estacions,
       %span.label.success= @total_bikes
-      bikes and
+      bicicletes i
       %span.label.success= @total_slots
-      parking slots
+      forats de pàrquing
 
     %p
-      %a.btn{:href => "#"} More details &raquo;
+      %a.btn{:href => "#"} Veure informació detallada per estació &raquo;
 
   .span5
-    %h2 Unavailable stations
+    %h2 Estacions no disponibles
     %ul
       - Station.unavailable.each do |station|
         %li= link_to station.name, station
@@ -29,14 +29,4 @@
     %h2 Heading
     %p Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
     %p
-      %a.btn{:href => "#"} View details &raquo;
-
-%h1 Average global weekly usage distribution
-
-:javascript
-  usageDistribution(#{Sample.punchcard.to_json}, 940, 250);
-
-%h1 Average global weekly unusage distribution
-
-:javascript
-  unusageDistribution(#{Sample.punchcard.to_json}, 940, 250);
+      %a.btn{:href => "#"} Veure informació detallada per estació &raquo;

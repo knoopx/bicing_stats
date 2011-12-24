@@ -1,6 +1,6 @@
 class StationsController < ApplicationController
   def index
-    @stations = Station.by_concurrency.all
+    @stations = Station.all
   end
 
   def show

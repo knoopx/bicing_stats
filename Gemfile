@@ -9,9 +9,7 @@ gem 'jquery-rails'
 gem 'squeel'
 gem 'twitter-bootstrap-rails'
 gem 'whenever', :require => false
-gem 'google_visualr'
 gem 'gmaps4rails'
-gem 'static-gmaps', :require => 'static_gmaps'
 gem 'googlecharts'
 gem 'valium'
 

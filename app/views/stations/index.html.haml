@@ -1,14 +1,11 @@
 %h1
-  Stations
-  %small #{@stations.size} stations
+  Estacions
+  %small #{@stations.size} en total
 
 %table.zebra-striped
   %thead
     %tr
-      %th Name
-      %th Used
-      %th Unused
-      %th Concurrency
+      %th Estació
 
   %tbody
     - @stations.each do |station|
@@ -17,6 +14,3 @@
           = link_to station.name, station
           %br
           %small= station.address
-        %td= station.used
-        %td= station.unused
-        %td= station.concurrency

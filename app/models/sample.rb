@@ -9,14 +9,17 @@ class Sample < ActiveRecord::Base
 
   scope :punchcard, lambda {
     select { [
-        DAYOFWEEK(created_at).as(:day),
+        WEEKDAY(created_at).as(:day),
         HOUR(created_at).as(:hour),
         AVG(used).as(:used),
         AVG(unused).as(:unused),
+        MAX(used).as(:max_used),
+        MAX(unused).as(:max_unused),
+        MIN(used).as(:min_used),
+        MIN(unused).as(:min_unused),
         STDDEV(used).as(:used_concurrency),
         STDDEV(unused).as(:unused_concurrency)
-    ] }.
-        group { [DAYOFWEEK(created_at), HOUR(created_at)] }
+    ] }.group { [WEEKDAY(created_at), HOUR(created_at)] }
   }
 
   after_create do

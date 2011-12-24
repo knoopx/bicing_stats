@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111101234828) do
+ActiveRecord::Schema.define(:version => 20111102005118) do
 
   create_table "samples", :force => true do |t|
     t.integer  "station_id"
@@ -29,11 +29,13 @@ ActiveRecord::Schema.define(:version => 20111101234828) do
     t.string   "address"
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "used",       :default => 0
-    t.integer  "unused",     :default => 0
+    t.integer  "used",             :default => 0
+    t.integer  "unused",           :default => 0
     t.integer  "sample_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "used_past_hour",   :default => 0
+    t.integer  "unused_past_hour", :default => 0
   end
 
 end
