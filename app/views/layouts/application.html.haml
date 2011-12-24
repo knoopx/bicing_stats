@@ -30,7 +30,19 @@
       = yield
 
       %footer
-        %p &copy; Company 2011
+        %p
+          %span{:href => "http://purl.org/dc/dcmitype/Dataset", :property => "dct:title", :rel => "dct:type", "xmlns:dct" => "http://purl.org/dc/terms/"} Aquesta web
+          a estat realitzada per
+          %a{:href => "http://knoopx.net", :property => "cc:attributionName", :rel => "cc:attributionURL", "xmlns:cc" => "http://creativecommons.org/ns#"} Víctor Martínez
+          i està llicenciada sota
+          = link_to "Reconeixement-NoComercial-CompartirIgual 3.0 No adaptada (CC BY-NC-SA 3.0)", "http://creativecommons.org/licenses/by-nc-sa/3.0/deed.ca", :rel => "license"
+          Codi font lliurement disponible a
+          = link_to "GitHub", "https://github.com/knoopx/bicing_stats"
 
-
+          Construïda gràcies a
+          = link_to "Ruby on Rails", "http://rubyonrails.org/"
+          ,
+          = link_to "Twitter Bootstrap", "http://twitter.github.com/bootstrap/"
+          i
+          = link_to "d3.js", "http://mbostock.github.com/d3/"
     = yield :scripts
