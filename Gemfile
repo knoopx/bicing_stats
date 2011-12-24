@@ -10,7 +10,6 @@ gem 'squeel'
 gem 'twitter-bootstrap-rails'
 gem 'whenever', :require => false
 gem 'gmaps4rails'
-gem 'googlecharts'
 gem 'valium'
 
 group :development do
