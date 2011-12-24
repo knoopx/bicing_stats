@@ -2,6 +2,10 @@ class HourlySample < ActiveRecord::Base
   belongs_to :station
   validates_presence_of :station
 
+  scope :availability, lambda {
+    select { [HOUR(created_at).as(:hour), :used, :unused] }
+  }
+
   scope :punchcard, lambda {
     select { [
         WEEKDAY(created_at).as(:day),

@@ -1,45 +1,76 @@
-%h1
-  = @station.name
-  %small= @station.address
+.page-header
+  %h1
+    = @station.name
+    %small
+      = @station.address
+      %span.label= l(@station.hourly_samples.maximum(:created_at).to_date)
+      al
+      %span.label= l(@station.hourly_samples.minimum(:created_at).to_date)
 
-Mostres recollides del
-= l(@station.hourly_samples.maximum(:created_at), :format => :short)
-al
-= l(@station.hourly_samples.minimum(:created_at), :format => :short)
+%h2 Disponibilitat durant les passades 24 hores
 
-.row
-  .span4
-    -#= image_tag @map.url
+#availability
 
-  .span12
-    #availability
-    :javascript
-      stackedAvailability("#availability", #{@station.hourly_samples.limit(24).value_of(:used)}, #{@station.hourly_samples.limit(50).value_of(:unused)});
+:javascript
+  stackedAvailability("#availability", #{@station.hourly_samples.availability.limit(24).to_json});
 
-    %table.zebra-striped
-      %thead
-        %tr
-          %th Data
-          %th Bicicletes
-          %th Pàrquings
 
-      %tbody
-        - @station.hourly_samples.limit(4).each do |sample|
-          %tr
-            %td= l(sample.created_at.change(:min => 0, :sec => 0), :format => :short)
-            %td= sample.used
-            %td= sample.unused
+%p{:class => "alert-message block-message warning"}
+  Aquesta estació disposa d'una mitjana de
+  %span.label.important= @station.hourly_samples.average(:used).round
+  bicicletes d'un total de
+  %span.label.success= @station.hourly_samples.maximum(:used)
+  disponibles.
+
+%p{:class => "alert-message block-message warning"}
+  Alternativament també d'una mitjana de
+  %span.label.important= @station.hourly_samples.average(:unused).round
+  pàrquings d'un total de
+  %span.label.success= @station.hourly_samples.maximum(:unused)
+  disponibles.
+
+
+%h2 Mapa
+%p
+  #map{:style => "width: 940px; height: 470px"}
+
+:javascript
+  var position = new google.maps.LatLng(#{@station.latitude}, #{@station.longitude});
+  var map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 15,
+    center: position,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  var marker = new google.maps.Marker({
+    position: position,
+    map: map,
+    title: "#{@station.name}"
+  });
 
 %h2 Disponibilitat de bicicletes mitjana per hora durant la setmana
+%br
 
 #min-used
-
 :javascript
   usageDistribution("#min-used", "used", #{@station.hourly_samples.punchcard.to_json});
 
 %h2 Disponibilitat de pàrquing mitjana per hora durant la setmana
-
+%br
 #min-unused
 
 :javascript
   usageDistribution("#min-unused", "unused", #{@station.hourly_samples.punchcard.to_json});
+
+
+%h2 Comentaris
+
+#disqus_thread
+:javascript
+  var disqus_shortname = 'estadstiquesbicing';
+  var disqus_identifier = '#{@station.id}';
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();

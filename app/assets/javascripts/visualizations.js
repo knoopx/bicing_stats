@@ -1,69 +1,129 @@
-var stackedAvailability = function(container, used, unused){
-  var w = 700;
-  var h = 100;
+var DayNames = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"];
 
-  var max = d3.max([d3.max(used), d3.max(unused)]);
-  var x = d3.scale.linear().domain([0, used.length]).range([0, w]);
-  var y = d3.scale.linear().domain([0, max]).rangeRound([0, h]);
+var stackedAvailability = function(container, data){
+  data = data.reverse();
+  var width = 940;
+  var height = 100;
+  var padding = 20;
+  var labelMargin = 5;
+  var barWidth = (width / data.length);
+  var hourOfTheDay = d3.time.format("%H:%M");
 
-  var chart = d3.select(container)
+  var max = d3.max([
+    d3.max(data.map(function(sample){ return sample.used })),
+    d3.max(data.map(function(sample){ return sample.unused }))
+  ]);
+
+  var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
+  var y = d3.scale.linear().domain([0, max]).rangeRound([0, height]);
+
+  var viewport = d3.select(container)
       .append("svg:svg")
-      .attr("width", w)
-      .attr("height", h);
+      .attr("width", width)
+      .attr("height", height + (padding * 2));
 
-  chart.selectAll("rect.bycycles")
-      .data(used)
-      .enter().append("svg:rect")
-      .attr("x", function(d, i){ return x(i) })
-      .attr("y", function(d){ return h - y(d) })
-      .attr("fill", "steelblue")
-      .attr("fill-opacity", 0.5)
-      .attr("stroke", "white")
-      .attr("width", function(d){ return w / used.length})
-      .attr("height", function(d){ return y(d) });
+  var chart = viewport.append("svg:g").attr("transform", "translate(0," + padding + ")");
 
   chart.selectAll("rect.parking")
-      .data(unused)
+      .data(data)
       .enter().append("svg:rect")
       .attr("x", function(d, i){ return x(i) })
-      .attr("y", function(d, i){ return h - y(d) - y(used[i]) })
-      .attr("fill", "#ccc")
-      .attr("fill-opacity", 0.5)
+      .attr("y", function(sample, i){ return height - (y(sample.unused) + y(sample.used)) })
+      .attr("fill", "#eee")
       .attr("stroke", "white")
-      .attr("width", function(d){ return w / used.length})
-      .attr("height", function(d){ return y(d) });
+      .attr("shape-rendering", "crispEdges")
+      .attr("width", barWidth)
+      .attr("height", function(sample){ return y(sample.unused) });
+
+  chart.selectAll("rect.bycycles")
+      .data(data)
+      .enter().append("svg:rect")
+      .attr("x", function(sample, index){ return x(index) })
+      .attr("y", function(sample){ return height - y(sample.used) })
+      .attr("fill", "steelblue")
+      .attr("shape-rendering", "crispEdges")
+      .attr("stroke", "white")
+      .attr("width", barWidth)
+      .attr("height", function(sample){ return y(sample.used) });
+
+  chart.selectAll("line.axis")
+      .data(x.ticks(5))
+      .enter().append("svg:line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", y)
+      .attr("y2", y)
+      .attr("shape-rendering", "crispEdges")
+      .attr("stroke-opacity", 0.25)
+      .attr("stroke", "white");
+
+  chart.selectAll("text.hour")
+      .data(data)
+      .enter().append("svg:text")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("font-weight", "bold")
+      .attr("fill", "#444")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "text-before-edge")
+      .text(function(sample){ return hourOfTheDay(new Date(0, 0, 0, sample.hour)) })
+      .attr("x", function(sample, index){ return x(index) + (barWidth / 2) })
+      .attr("y", height + labelMargin);
+
+  chart.selectAll("text.value")
+      .data(data)
+      .enter().append("svg:text")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("fill", "#ccc")
+      .attr("text-anchor", "middle")
+      .text(function(sample){ return sample.used + "/" + sample.unused })
+      .attr("x", function(sample, index){ return x(index) + (barWidth / 2) })
+      .attr("y", function(sample){
+        return d3.min([
+          height - (y(sample.unused) + y(sample.used)),
+          height - y(sample.used)
+        ]) - labelMargin
+      });
 }
 
 var usageDistribution = function(container, criteria, data){
-  var padding = 50;
-  var maxCircleSize = 18;
-  var width = (maxCircleSize * 2 * 25);
+  var horizontalPadding = 70;
+  var verticalPadding = 30;
+
+  var width = 940;
+  var maxCircleSize = (width / 2 / 25);
   var height = (maxCircleSize * 2 * 8);
+
+  var chartWidth = width - horizontalPadding;
+  var chartHeight = height - verticalPadding;
+
   var labelMargin = 10;
   var maxUsed = d3.max(data, function(sample){ return sample[criteria] });
-  var y = d3.scale.linear().domain([-1, 7]).range([0, height]);
-  var x = d3.scale.linear().domain([-1, 24]).range([0, width]);
+  var y = d3.scale.linear().domain([-1, 7]).range([0, chartHeight]);
+  var x = d3.scale.linear().domain([-1, 24]).range([0, chartWidth]);
   var z = d3.scale.linear().domain([0, maxUsed]).range([0, maxCircleSize]);
-  var color = d3.scale.linear().domain([0, maxUsed]).interpolate(d3.interpolateRgb).range(["#ccc", "#A2C0D9"])
+  var color = d3.scale.linear().domain([0, maxUsed]).interpolate(d3.interpolateRgb).range(["#eee", "steelblue"])
 
   var dayOfTheWeek = d3.time.format("%a");
   var hourOfTheDay = d3.time.format("%H:%M");
 
   var viewport = d3.select(container)
       .append("svg:svg")
-      .attr("width", width + (padding * 2))
-      .attr("height", height + (padding * 2))
+      .attr("width", width)
+      .attr("height", height);
 
   var chart = viewport.append("svg:g")
-      .attr("transform", "translate(" + padding + "," + padding + ")");
+      .attr("transform", "translate(" + horizontalPadding + ", 0)");
 
   chart.selectAll("line.y")
       .data(d3.range(0, 7))
       .enter().append("svg:line")
       .attr("x1", 0)
-      .attr("x2", width)
+      .attr("x2", chartWidth)
       .attr("y1", y)
       .attr("y2", y)
+      .attr("shape-rendering", "crispEdges")
       .attr("stroke", "#eee");
 
   chart.selectAll("line.x")
@@ -72,13 +132,15 @@ var usageDistribution = function(container, criteria, data){
       .attr("x1", x)
       .attr("x2", x)
       .attr("y1", 0)
-      .attr("y2", height)
+      .attr("y2", chartHeight)
+      .attr("shape-rendering", "crispEdges")
       .attr("stroke", "#eee");
 
   chart.selectAll("circle.value")
       .data(data)
       .enter()
       .append("svg:circle")
+      .attr("stroke", "none")
       .attr("fill", function(sample){ return color(sample[criteria])})
       .attr("cx", function(sample){ return x(sample.hour) })
       .attr("cy", function(sample){ return y(sample.day) })
@@ -101,7 +163,7 @@ var usageDistribution = function(container, criteria, data){
       .data(d3.range(0, 24))
       .enter().append("svg:text")
       .attr("x", x)
-      .attr("y", height + labelMargin)
+      .attr("y", chartHeight + labelMargin)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "text-before-edge")
       .attr("font-family", "sans-serif")
@@ -118,13 +180,14 @@ var usageDistribution = function(container, criteria, data){
       .attr("font-size", 10)
       .attr("x", -labelMargin)
       .attr("y", y)
-      .text(function(day){ return dayOfTheWeek(new Date(0, 0, day + 1))});
+      .text(function(day){ return DayNames[day] });
 
   chart.append("svg:rect")
       .attr("x", 0)
-      .attr("width", width)
-      .attr("y", 0)
-      .attr("height", height)
+      .attr("y", 1)
+      .attr("width", chartWidth - 1)
+      .attr("height", chartHeight - 1)
       .attr("fill", "none")
-      .attr("stroke", "black");
+      .attr("stroke", "black")
+      .attr("shape-rendering", "crispEdges");
 }
