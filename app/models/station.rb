@@ -3,6 +3,7 @@ require 'open-uri'
 class Station < ActiveRecord::Base
   attr_accessible :id, :latitude, :longitude, :name, :address, :used, :unused
   has_many :samples, :dependent => :delete_all
+  has_many :hourly_samples, :dependent => :delete_all
 
   scope :by_concurrency, lambda {
     joins(:samples).

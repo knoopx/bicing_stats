@@ -2,14 +2,19 @@
   = @station.name
   %small= @station.address
 
+Mostres recollides del
+= l(@station.hourly_samples.maximum(:created_at), :format => :short)
+al
+= l(@station.hourly_samples.minimum(:created_at), :format => :short)
+
 .row
   .span4
-    = image_tag @map.url
+    -#= image_tag @map.url
 
   .span12
     #availability
     :javascript
-      stackedAvailability("#availability", #{@station.samples.hourly.limit(24).value_of(:used)}, #{@station.samples.hourly.limit(50).value_of(:unused)});
+      stackedAvailability("#availability", #{@station.hourly_samples.limit(24).value_of(:used)}, #{@station.hourly_samples.limit(50).value_of(:unused)});
 
     %table.zebra-striped
       %thead
@@ -19,7 +24,7 @@
           %th Pàrquings
 
       %tbody
-        - @station.samples.order("created_at desc").hourly.limit(4).each do |sample|
+        - @station.hourly_samples.limit(4).each do |sample|
           %tr
             %td= l(sample.created_at.change(:min => 0, :sec => 0), :format => :short)
             %td= sample.used
@@ -30,11 +35,11 @@
 #min-used
 
 :javascript
-  usageDistribution("#min-used", "used", #{@station.samples.punchcard.to_json});
+  usageDistribution("#min-used", "used", #{@station.hourly_samples.punchcard.to_json});
 
 %h2 Disponibilitat de pàrquing mitjana per hora durant la setmana
 
 #min-unused
 
 :javascript
-  usageDistribution("#min-unused", "unused", #{@station.samples.punchcard.to_json});
+  usageDistribution("#min-unused", "unused", #{@station.hourly_samples.punchcard.to_json});

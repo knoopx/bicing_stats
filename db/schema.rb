@@ -11,7 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111102005118) do
+ActiveRecord::Schema.define(:version => 20111224120205) do
+
+  create_table "hourly_samples", :force => true do |t|
+    t.integer  "station_id"
+    t.integer  "used",       :default => 0
+    t.integer  "unused",     :default => 0
+    t.integer  "max_used",   :default => 0
+    t.integer  "min_used",   :default => 0
+    t.integer  "min_unused", :default => 0
+    t.integer  "max_unused", :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "samples", :force => true do |t|
     t.integer  "station_id"
