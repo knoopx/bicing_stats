@@ -11,43 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111224120205) do
-
+ActiveRecord::Schema.define(:version => 20111227130758) do
   create_table "hourly_samples", :force => true do |t|
-    t.integer  "station_id"
-    t.integer  "used",       :default => 0
-    t.integer  "unused",     :default => 0
-    t.integer  "max_used",   :default => 0
-    t.integer  "min_used",   :default => 0
-    t.integer  "min_unused", :default => 0
-    t.integer  "max_unused", :default => 0
+    t.integer "station_id"
+    t.integer "used", :default => 0
+    t.integer "unused", :default => 0
+    t.integer "sum_used", :default => 0
+    t.integer "sum_unused", :default => 0
+    t.integer "max_used"
+    t.integer "min_used"
+    t.integer "min_unused"
+    t.integer "max_unused"
+    t.integer "sample_count", :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "samples", :force => true do |t|
-    t.integer  "station_id"
-    t.integer  "used",       :default => 0
-    t.integer  "unused",     :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "samples", ["created_at"], :name => "index_samples_on_created_at"
-  add_index "samples", ["used", "unused", "created_at"], :name => "index_samples_on_used_unused_created_at"
+  add_index "hourly_samples", ["created_at"], :name => "index_hourly_samples_on_created_at"
+  add_index "hourly_samples", ["station_id"], :name => "index_hourly_samples_on_station_id"
 
   create_table "stations", :force => true do |t|
-    t.string   "name"
-    t.string   "address"
-    t.float    "latitude"
-    t.float    "longitude"
-    t.integer  "used",             :default => 0
-    t.integer  "unused",           :default => 0
-    t.integer  "sample_id"
+    t.string "name"
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.integer "used", :default => 0
+    t.integer "unused", :default => 0
+    t.integer "sample_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "used_past_hour",   :default => 0
-    t.integer  "unused_past_hour", :default => 0
+    t.integer "used_past_hour", :default => 0
+    t.integer "unused_past_hour", :default => 0
   end
-
 end

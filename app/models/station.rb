@@ -2,15 +2,7 @@ require 'open-uri'
 
 class Station < ActiveRecord::Base
   attr_accessible :id, :latitude, :longitude, :name, :address, :used, :unused
-  has_many :samples, :dependent => :delete_all
   has_many :hourly_samples, :dependent => :delete_all
-
-  scope :by_concurrency, lambda {
-    joins(:samples).
-        select { ["stations.*", STDDEV(samples.used).as(:concurrency)] }.
-        where{samples.created_at >= 15.minutes.ago}.
-        order { STDDEV(samples.used).desc }.group { id }
-  }
 
   validates_presence_of :name, :address, :latitude, :longitude
 
@@ -18,51 +10,45 @@ class Station < ActiveRecord::Base
 
   default_scope order(:name)
 
-  def gmaps
-    true
-  end
-
-  def gmaps4rails_address
-    self.address
-  end
-
-  def gmaps4rails_infowindow
-    self.name
-  end
-
-  def usage
-    data_table = GoogleVisualr::DataTable.new
-    data_table.new_column('number', 'Age')
-    data_table.new_column('number', 'Weight')
-    data_table.add_rows(6)
-    data_table.set_cell(0, 0, 8)
-    data_table.set_cell(0, 1, 12)
-    data_table.set_cell(1, 0, 4)
-    data_table.set_cell(1, 1, 5.5)
-    data_table.set_cell(2, 0, 11)
-    data_table.set_cell(2, 1, 14)
-    data_table.set_cell(3, 0, 4)
-    data_table.set_cell(3, 1, 4.5)
-    data_table.set_cell(4, 0, 3)
-    data_table.set_cell(4, 1, 3.5)
-    data_table.set_cell(5, 0, 6.5)
-    data_table.set_cell(5, 1, 7)
-  end
-
   class << self
-    def download(sample = false)
+    def update
       list = open("http://pas.tempos21.com/BicingiPhone/UpdateStatus?fu=1").read
       Station.transaction do
         list.each_line do |line|
-          station_attrs = {}
-          sample_attrs = {}
-          station_attrs[:id], station_attrs[:longitude], station_attrs[:latitude], unknown, station_attrs[:name], unkown2, station_attrs[:address], sample_attrs[:used], sample_attrs[:unused] = line.chomp.split("|")
-          next if station_attrs[:id] == "null"
-          station = self.find_or_create_by_id(station_attrs)
-          station.samples.create(sample_attrs) if sample
+          id, longitude, latitude, unknown, name, unknown2, address, used, unused = line.chomp.split("|")
+
+          next if id == "null"
+
+          station = self.find_or_create_by_id(
+              :id => id,
+              :name => name,
+              :address => address,
+              :longitude => longitude,
+              :latitude => latitude,
+              :used => used,
+              :unused => unused
+          )
+
+          station.update_attributes(:used => used, :unused => unused)
+
+          station.aggregate!(used, unused)
         end
       end
       true
+    end
+  end
+
+  def aggregate!(used, unused)
+    created_at = DateTime.now.change(:min => 0, :sec => 0, :usec => 0)
+    if sample = self.hourly_samples.find_by_created_at(created_at)
+      #HourlySample.update_counters(sample.id, :used => used, :unused => unused, :sample_count => 1)
+      self.hourly_samples.update_all(
+          ["sum_used = sum_used + :used, max_used = GREATEST(IFNULL(max_used, :used), :used), min_used = LEAST(IFNULL(min_used, :used), :used),
+            unused = sum_unused + :unused, max_unused = GREATEST(IFNULL(max_unused, :unused), :unused), min_unused = LEAST(IFNULL(min_unused, :unused), :unused),
+            sample_count = sample_count + 1, used = sum_used / sample_count, unused = sum_unused / sample_count", :used => used, :unused => unused],
+      )
+    else
+      self.hourly_samples.create(:created_at => created_at, :used => used, :unused => unused, :sample_count => 1)
     end
   end
 end

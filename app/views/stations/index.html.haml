@@ -6,6 +6,8 @@
   %thead
     %tr
       %th Estació
+      %th Bicicletes
+      %th Pàrquings
 
   %tbody
     - @stations.each do |station|
@@ -14,3 +16,7 @@
           = link_to station.name, station
           %br
           %small= station.address
+        %td
+          = station.used
+        %td
+          = station.unused

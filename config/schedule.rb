@@ -1,3 +1,3 @@
 every 1.minute do
-  runner "Station.download(true)"
+  runner "Station.update"
 end
