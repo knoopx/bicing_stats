@@ -4,7 +4,7 @@
   .span6
     %h2 Disponibilitat
     %p
-      Bicing te un total de
+      Bicing disposa actualment de
       %span.label.success= Station.count
       estacions,
       %span.label.success= Station.sum(:used)
@@ -13,13 +13,19 @@
       pàrquings
 
     %p
-      %span.label.important= Station.sum(:used).fdiv(120_000)
+      %span.label.important= number_with_precision(Station.sum(:used).fdiv(120_000))
       bicicletes per abonat*
-
+      %br
       %small
         * Segons el seu facebook hi ha una mitjana de 120.000 abonats
+
     %p
-      %a.btn{:href => "#"} Veure informació detallada per estació &raquo;
+      %span.label= l(HourlySample.maximum(:created_at).to_date)
+      al
+      %span.label= l(HourlySample.minimum(:created_at).to_date)
+
+    %p
+      = link_to "Veure informació detallada per estació &raquo;".html_safe, stations_path, :class => "btn"
 
   .span10
     %h2 Estacions no disponibles
