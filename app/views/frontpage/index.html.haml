@@ -19,20 +19,26 @@
 
 
   $(data).each(function(){
+    var id = this.id;
     var position = new google.maps.LatLng(this.latitude, this.longitude);
     bounds.extend(position);
 
-    new google.maps.Circle({
-            center: position,
-            radius: 100,
-            strokeColor: color(this.used),
-            strokeOpacity: 0.8,
-            strokeWeight: 1,
-            fillColor: color(this.used),
-            fillOpacity: 0.5,
-            map: map
-        });
+    var circle = new google.maps.Circle({
+        center: position,
+        radius: 100,
+        strokeColor: color(this.used),
+        strokeOpacity: 0.8,
+        strokeWeight: 1,
+        fillColor: color(this.used),
+        fillOpacity: 0.5,
+        map: map
+    });
+
+    google.maps.event.addListener(circle, 'click', function(){
+      window.location.replace("/stations/" + id)
+    });
   });
+
   map.fitBounds(bounds);
 
 .row
