@@ -1,4 +1,39 @@
-%h2 ¿Vols fer-te del bicing? Pensa-t’ho dues vegades.
+.page-header
+  %h1 Mapa de disponibilitat
+
+%p
+  #map{:style => "width: 940px; height: 470px"}
+
+:javascript
+  var map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 15,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  var data = #{Station.all.map { |s| {:id => s.id, :name => s.name, :used => s.used, :unused => s.unused, :latitude => s.latitude, :longitude => s.longitude} }.to_json};
+  var bounds = new google.maps.LatLngBounds();
+  var maxCircleSize = 100;
+  var maxUsed = d3.max(data.map(function(station){ return station.used }))
+  var radius = d3.scale.linear().domain([0, maxUsed]).range([0, maxCircleSize]);
+  var color = d3.scale.linear().domain([0, maxUsed]).interpolate(d3.interpolateRgb).range(["#46A546", "#C43C35"])
+
+
+  $(data).each(function(){
+    var position = new google.maps.LatLng(this.latitude, this.longitude);
+    bounds.extend(position);
+
+    new google.maps.Circle({
+            center: position,
+            radius: 100,
+            strokeColor: color(this.used),
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillColor: color(this.used),
+            fillOpacity: 0.5,
+            map: map
+        });
+  });
+  map.fitBounds(bounds);
 
 .row
   .span6
