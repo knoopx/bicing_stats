@@ -1,6 +1,7 @@
 class StationsController < ApplicationController
   def index
-    @stations = Station.page(params[:page])
+    @search = Station.search(params[:q])
+    @stations = @search.result.page(params[:page])
   end
 
   def show

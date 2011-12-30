@@ -1,0 +1,7 @@
+ca:
+  activerecord:
+    models:
+      station: Estació
+    attributes:
+      station:
+        name: Nom

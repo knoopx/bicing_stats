@@ -12,6 +12,7 @@ gem 'whenever', :require => false
 gem 'valium'
 gem 'rdiscount'
 gem 'kaminari'
+gem 'ransack'
 
 group :development do
   gem 'sqlite3'

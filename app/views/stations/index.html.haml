@@ -2,6 +2,12 @@
   Estacions
   %small #{@stations.size} en total
 
+.well
+  = search_form_for @search, :html => {:class => "form-stacked"} do |f|
+    = f.label :name_matches
+    = f.text_field :name_matches
+    = f.submit :class => "btn primary"
+
 %table.zebra-striped
   %thead
     %tr
