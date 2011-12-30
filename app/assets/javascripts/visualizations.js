@@ -46,17 +46,6 @@ var stackedAvailability = function(container, data){
       .attr("width", barWidth)
       .attr("height", function(sample){ return y(sample.used) });
 
-  chart.selectAll("line.axis")
-      .data(x.ticks(5))
-      .enter().append("svg:line")
-      .attr("x1", 0)
-      .attr("x2", width)
-      .attr("y1", y)
-      .attr("y2", y)
-      .attr("shape-rendering", "crispEdges")
-      .attr("stroke-opacity", 0.25)
-      .attr("stroke", "white");
-
   chart.selectAll("text.hour")
       .data(data)
       .enter().append("svg:text")
