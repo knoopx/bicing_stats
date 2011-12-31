@@ -41,8 +41,7 @@ class Station < ActiveRecord::Base
   def aggregate!(used, unused)
     created_at = DateTime.now.change(:min => 0, :sec => 0, :usec => 0)
     if sample = self.hourly_samples.find_by_created_at(created_at)
-      #HourlySample.update_counters(sample.id, :used => used, :unused => unused, :sample_count => 1)
-      self.hourly_samples.update_all(
+      HourlySample.where(:id => sample.id).update_all(
           ["sum_used = sum_used + :used, max_used = GREATEST(IFNULL(max_used, :used), :used), min_used = LEAST(IFNULL(min_used, :used), :used),
             sum_unused = sum_unused + :unused, max_unused = GREATEST(IFNULL(max_unused, :unused), :unused), min_unused = LEAST(IFNULL(min_unused, :unused), :unused),
             sample_count = sample_count + 1, used = sum_used / sample_count, unused = sum_unused / sample_count", :used => used, :unused => unused],
