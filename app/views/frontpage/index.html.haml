@@ -15,28 +15,32 @@
   var maxCircleSize = 100;
   var maxUsed = d3.max(data.map(function(station){ return station.used }))
   var radius = d3.scale.linear().domain([0, maxUsed]).range([0, maxCircleSize]);
-  var color = d3.scale.linear().domain([0, maxUsed]).interpolate(d3.interpolateRgb).range(["#46A546", "#C43C35"])
-
 
   $(data).each(function(){
     var id = this.id;
+    var used = this.used;
     var position = new google.maps.LatLng(this.latitude, this.longitude);
-    bounds.extend(position);
+    var max = this.used + this.unused;
+    var colorScale = d3.scale.linear().domain([0, max / 2, max]).range(["#C43C35", "#f8fc48", "#46A546"])
+    var pinColor = colorScale(used).substring(1);
 
-    var circle = new google.maps.Circle({
-        center: position,
-        radius: 100,
-        strokeColor: color(this.used),
-        strokeOpacity: 0.8,
-        strokeWeight: 1,
-        fillColor: color(this.used),
-        fillOpacity: 0.5,
-        map: map
+    var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + used  + "|" + pinColor,
+      new google.maps.Size(21, 34),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34)
+    );
+
+    var marker = new google.maps.Marker({
+       position: position,
+       map: map,
+       icon: pinImage
     });
 
-    google.maps.event.addListener(circle, 'click', function(){
+    google.maps.event.addListener(marker, 'click', function(){
       window.location.replace("/stations/" + id)
     });
+
+    bounds.extend(position);
   });
 
   map.fitBounds(bounds);
