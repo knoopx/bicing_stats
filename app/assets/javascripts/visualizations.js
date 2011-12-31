@@ -9,10 +9,7 @@ var stackedAvailability = function(container, data){
   var barWidth = (width / data.length);
   var hourOfTheDay = d3.time.format("%H:%M");
 
-  var max = d3.max([
-    d3.max(data.map(function(sample){ return sample.used })),
-    d3.max(data.map(function(sample){ return sample.unused }))
-  ]);
+  var max = d3.max(data.map(function(sample){ return sample.used + sample.unused }));
 
   var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
   var y = d3.scale.linear().domain([0, max]).rangeRound([0, height]);
